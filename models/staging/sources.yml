@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: job_market
+    schema: bronze
+    tables:
+      - name: linkedin_postings_raw
+        description: "Raw scraped job postings from LinkedIn search results, landed every 6 hours. Append-only, expect duplicates across runs."
+      - name: linkedin_postings_descriptions_raw
+        description: "Full job description text fetched per job_url, landed daily. Keyed by job_url."
+
+  - name: silver
+    database: job_market
+    schema: silver
+    tables:
+      - name: linkedin_keyword_snapshots
+        description: "Daily snapshots of extracted technical keywords and their posting counts, produced by the spaCy-based extraction notebook. Append-only, one row per keyword per snapshot_date."
