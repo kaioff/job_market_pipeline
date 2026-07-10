@@ -5,7 +5,7 @@
         'employee', 'employer', 'benefits', 'compensation', 'salary',
         'factors', 'security', 'compliance', 'policy', 'applicants',
         'bonus', 'pto', 'vision', 'health', 'medical', 'dental','our customers',
-        'best practices','impact','life','analytics',
+        'best practices','impact','life','analytics','your work',
         -- Generic structural / role words
         'range', 'end', 'scale', 'engineers', 'engineer', 'software',
         'science', 'engineering', 'data', 'world', 'computer science',
