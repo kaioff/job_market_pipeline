@@ -223,3 +223,11 @@ target/
 dbt_packages/
 logs/
 # end dbt Cloud content
+
+# Node / dashboard
+node_modules/
+package-lock.json
+
+# macOS / editor
+.DS_Store
+.idea/
