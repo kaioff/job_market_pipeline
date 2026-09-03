@@ -1,9 +1,19 @@
 with vocabulary as (
 
+    -- linkedin_keyword_snapshots isn't purely clean tech-skill terms --
+    -- it also contains scraped junk (full URLs, HTML/CSS fragments, long
+    -- boilerplate sentences) that isn't a "keyword" in any useful sense.
+    -- A single bad entry (an unbalanced/truncated string) is enough to
+    -- make the combined regex below invalid, so filter down to things
+    -- that actually look like skill/tech terms: no URLs or markup, and
+    -- short -- real skills are essentially never more than a few words.
     select distinct keyword
     from {{ source('silver', 'linkedin_keyword_snapshots') }}
     where keyword not in {{ noise_terms() }}
       and length(keyword) > 1
+      and length(keyword) <= 40
+      and size(split(trim(keyword), '\\s+')) <= 4
+      and keyword not rlike '(?i)https?://|www\\.|\\.com|\\.html|\\.pdf|<|>|="|@'
 
 ),
 
