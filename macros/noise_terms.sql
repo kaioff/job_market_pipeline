@@ -6,6 +6,7 @@
         'factors', 'security', 'compliance', 'policy', 'applicants',
         'bonus', 'pto', 'vision', 'health', 'medical', 'dental','our customers',
         'best practices','impact','life','analytics','your work','basis',
+        'observability',
         -- Generic structural / role words
         'range', 'end', 'scale', 'engineers', 'engineer', 'software',
         'science', 'engineering', 'data', 'world', 'computer science',
