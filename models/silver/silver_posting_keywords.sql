@@ -1,54 +1,45 @@
--- Posting-level keyword membership: one row per (job_url, keyword) match.
+-- Posting-level skill membership: one row per (job_url, skill) match.
 --
 -- linkedin_keyword_snapshots only carries daily aggregate counts per
 -- keyword, with no link back to individual postings, so it can't answer
 -- "which postings mention Python" or "what else shows up alongside
--- Python". This model re-derives that link by matching a keyword
--- vocabulary against each posting's own description text.
+-- Python". This model derives that link by matching a curated skill
+-- vocabulary against each posting's description text.
 --
--- Why the vocabulary is aggressively narrowed below: the upstream
--- extraction emits ~thousands of "keywords", but most are boilerplate
--- noun phrases lifted out of descriptions ("fast-paced, cross-functional
--- environment", "preferred qualifications experience") rather than
--- skills. Matching all of them is both meaningless for a skill lookup
--- and expensive -- the postings x vocabulary cross join is what makes
--- this model slow. Real skill terms are short and recur across many
--- postings, so we keep only the most common short terms.
+-- Why a curated seed instead of the extracted keywords: the upstream
+-- extraction does generic noun-phrase extraction, not skill recognition,
+-- so its vocabulary is roughly half boilerplate ('veteran', 'salary
+-- range', 'degree', 'hands-on experience'). Blocklisting that via
+-- noise_terms() is endless whack-a-mole, since every new batch of
+-- postings brings new junk. The seed inverts it: nothing unlisted can
+-- enter, aliases are handled explicitly ('amazon web services' -> aws),
+-- and the smaller vocabulary makes the downstream co-occurrence join
+-- dramatically cheaper. Cost: a genuinely new technology has to be added
+-- to seeds/skills.csv to show up here.
 --
 -- Matching is case-insensitive and word-boundary aware, so 'go' won't
--- match inside 'google'. It won't catch aliases the extraction job may
--- special-case (e.g. "AWS" vs "Amazon Web Services"), and symbol-heavy
--- keywords like 'c++' or 'c#' fall back to a plain literal match since
--- \b doesn't apply around non-word characters. Per-keyword posting
--- counts here may therefore drift slightly from
--- linkedin_keyword_snapshots -- treat this model as the source for
--- posting-level drill-downs (co-occurrence, top titles/companies for a
--- skill), not as a replacement for the trend counts already served by
--- gold_keyword_latest / gold_keyword_trends.
+-- match inside 'google'. Symbol-heavy skills ('c++', 'c#', 'node.js')
+-- fall back to a plain literal containment check, since \b doesn't apply
+-- around non-word characters.
 
-{% set max_vocabulary_size = 400 %}
+with skill_terms as (
 
-with vocabulary as (
-
-    select keyword
+    -- one row per searchable term: the canonical skill name plus each of
+    -- its aliases, all mapping back to the canonical skill
+    select
+        skill,
+        category,
+        lower(trim(term)) as term
     from (
         select
-            keyword,
-            sum(posting_count) as total_mentions
-        from {{ source('silver', 'linkedin_keyword_snapshots') }}
-        where keyword not in {{ noise_terms() }}
-          and length(keyword) between 2 and 30
-          -- skills are one or two words ("python", "apache spark"),
-          -- never sentence fragments
-          and size(split(trim(keyword), '\\s+')) <= 2
-          -- drop scraped junk: urls, markup, emails
-          and keyword not rlike '(?i)https?://|www\\.|\\.com|\\.html|\\.pdf|<|>|="|@'
-          -- a real skill term recurs; one-off phrases are extraction noise
-          and keyword rlike '^[a-z0-9][a-z0-9 .+#/-]*$'
-        group by keyword
+            skill,
+            category,
+            explode(
+                split(concat_ws('|', skill, coalesce(aliases, '')), '\\|')
+            ) as term
+        from {{ ref('skills') }}
     )
-    order by total_mentions desc
-    limit {{ max_vocabulary_size }}
+    where trim(term) != ''
 
 ),
 
@@ -64,24 +55,30 @@ matched as (
 
     select
         p.job_url,
-        v.keyword
+        s.skill,
+        s.category
     from postings p
-    cross join vocabulary v
+    cross join skill_terms s
     where
         case
             -- word characters at both ends -> a word-boundary match is
-            -- meaningful; otherwise (symbol-heavy keywords like 'c++')
-            -- fall back to a plain literal containment check
-            when v.keyword rlike '^\\w.*\\w$|^\\w$'
+            -- meaningful; otherwise ('c++', 'node.js', 'ci/cd') fall back
+            -- to a plain literal containment check
+            when s.term rlike '^\\w.*\\w$|^\\w$'
                 then p.description_lower rlike concat(
                     '(?i)\\b',
-                    regexp_replace(lower(v.keyword), '([\\+\\*\\?\\.\\(\\)\\[\\]\\^\\$\\|\\\\])', '\\\\$1'),
+                    regexp_replace(s.term, '([\\+\\*\\?\\.\\(\\)\\[\\]\\^\\$\\|\\\\])', '\\\\$1'),
                     '\\b'
                 )
-            else instr(p.description_lower, lower(v.keyword)) > 0
+            else instr(p.description_lower, s.term) > 0
         end
 
 )
 
-select distinct job_url, keyword
+-- distinct collapses the case where a posting matches both the canonical
+-- name and one of its aliases
+select distinct
+    job_url,
+    skill as keyword,
+    category
 from matched

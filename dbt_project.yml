@@ -23,3 +23,7 @@ models:
     gold:
       +materialized: table
       +schema: gold
+
+seeds:
+  job_market_pipeline:
+    +schema: silver

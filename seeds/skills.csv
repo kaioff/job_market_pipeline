@@ -1,0 +1,217 @@
+skill,category,aliases
+python,language,
+sql,language,
+java,language,
+scala,language,
+javascript,language,js
+typescript,language,ts
+go,language,golang
+rust,language,
+c++,language,cpp
+c#,language,csharp|.net
+ruby,language,
+php,language,
+r,language,
+kotlin,language,
+swift,language,
+bash,language,shell scripting|shell
+powershell,language,
+matlab,language,
+julia,language,
+perl,language,
+aws,cloud,amazon web services
+azure,cloud,microsoft azure
+gcp,cloud,google cloud|google cloud platform
+snowflake,data_platform,
+databricks,data_platform,
+bigquery,data_platform,google bigquery
+redshift,data_platform,amazon redshift
+synapse,data_platform,azure synapse
+delta lake,data_platform,deltalake
+apache iceberg,data_platform,iceberg
+apache hudi,data_platform,hudi
+lakehouse,data_platform,
+data lake,data_platform,datalake
+data warehouse,data_platform,datawarehouse
+postgresql,database,postgres
+mysql,database,
+sql server,database,mssql|microsoft sql server
+oracle,database,oracle db
+mongodb,database,mongo
+cassandra,database,apache cassandra
+dynamodb,database,
+redis,database,
+elasticsearch,database,elastic search
+opensearch,database,
+neo4j,database,
+clickhouse,database,
+duckdb,database,
+sqlite,database,
+couchbase,database,
+mariadb,database,
+teradata,database,
+db2,database,
+pinecone,database,
+weaviate,database,
+milvus,database,
+pgvector,database,
+vector database,database,vector db|vector store
+airflow,orchestration,apache airflow
+dagster,orchestration,
+prefect,orchestration,
+luigi,orchestration,
+dbt,orchestration,data build tool
+azure data factory,orchestration,adf
+aws glue,orchestration,glue
+step functions,orchestration,aws step functions
+control-m,orchestration,controlm
+oozie,orchestration,apache oozie
+nifi,orchestration,apache nifi
+informatica,orchestration,
+talend,orchestration,
+ssis,orchestration,
+fivetran,orchestration,
+stitch,orchestration,
+airbyte,orchestration,
+matillion,orchestration,
+kafka,streaming,apache kafka
+spark,streaming,apache spark|pyspark
+flink,streaming,apache flink
+kinesis,streaming,aws kinesis
+pubsub,streaming,google pubsub|pub/sub
+rabbitmq,streaming,
+pulsar,streaming,apache pulsar
+storm,streaming,apache storm
+beam,streaming,apache beam
+spark streaming,streaming,structured streaming
+kafka connect,streaming,
+debezium,streaming,
+hadoop,big_data,apache hadoop
+hive,big_data,apache hive
+presto,big_data,
+trino,big_data,
+impala,big_data,
+mapreduce,big_data,
+hdfs,big_data,
+emr,big_data,aws emr
+tableau,bi,
+power bi,bi,powerbi
+looker,bi,
+qlik,bi,qlikview|qliksense
+mode,bi,mode analytics
+metabase,bi,
+superset,bi,apache superset
+sigma,bi,sigma computing
+sisense,bi,
+domo,bi,
+quicksight,bi,aws quicksight
+thoughtspot,bi,
+excel,bi,microsoft excel
+google sheets,bi,
+machine learning,ml,ml
+deep learning,ml,
+nlp,ml,natural language processing
+computer vision,ml,cv
+tensorflow,ml,
+pytorch,ml,torch
+scikit-learn,ml,sklearn|scikit learn
+keras,ml,
+xgboost,ml,
+lightgbm,ml,
+pandas,ml,
+numpy,ml,
+scipy,ml,
+huggingface,ml,hugging face
+mlflow,ml,
+kubeflow,ml,
+sagemaker,ml,aws sagemaker
+vertex ai,ml,google vertex ai
+feature store,ml,
+mlops,ml,
+llm,ml,large language model|large language models
+generative ai,ml,genai
+rag,ml,retrieval augmented generation
+langchain,ml,
+llamaindex,ml,
+openai,ml,
+prompt engineering,ml,
+fine-tuning,ml,fine tuning
+vector embeddings,ml,embeddings
+recommendation systems,ml,recommender systems
+time series,ml,time series forecasting
+a/b testing,analytics,ab testing|experimentation
+statistics,analytics,statistical analysis
+data modeling,analytics,dimensional modeling
+star schema,analytics,
+data mesh,analytics,
+data governance,analytics,
+data quality,analytics,
+data lineage,analytics,
+master data management,analytics,mdm
+etl,analytics,
+elt,analytics,
+data pipelines,analytics,data pipeline
+docker,devops,
+kubernetes,devops,k8s
+terraform,devops,
+ansible,devops,
+jenkins,devops,
+gitlab ci,devops,gitlab
+github actions,devops,
+circleci,devops,
+argocd,devops,argo cd
+helm,devops,
+cloudformation,devops,
+pulumi,devops,
+git,devops,
+ci/cd,devops,cicd|continuous integration
+linux,devops,
+unix,devops,
+nginx,devops,
+prometheus,observability,
+grafana,observability,
+datadog,observability,
+splunk,observability,
+new relic,observability,newrelic
+opentelemetry,observability,otel
+elk stack,observability,elk
+great expectations,observability,
+monte carlo,observability,
+soda,observability,
+rest api,engineering,rest apis|restful api
+graphql,engineering,
+grpc,engineering,
+microservices,engineering,
+fastapi,engineering,
+flask,engineering,
+django,engineering,
+spring boot,engineering,spring
+node.js,engineering,nodejs|node
+react,engineering,react.js|reactjs
+angular,engineering,
+vue,engineering,vue.js|vuejs
+next.js,engineering,nextjs
+html,engineering,
+css,engineering,
+webpack,engineering,
+serverless,engineering,
+lambda,engineering,aws lambda
+api gateway,engineering,
+event-driven architecture,engineering,event driven
+distributed systems,engineering,
+system design,engineering,
+agile,practice,
+scrum,practice,
+kanban,practice,
+jira,practice,
+confluence,practice,
+snowpark,data_platform,
+unity catalog,data_platform,
+salesforce,domain,
+sap,domain,
+workday,domain,
+netsuite,domain,
+hipaa,compliance,
+gdpr,compliance,
+soc 2,compliance,soc2
+pci,compliance,pci dss
