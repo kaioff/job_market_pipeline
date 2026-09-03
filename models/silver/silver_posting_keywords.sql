@@ -1,9 +1,11 @@
 with vocabulary as (
-
     select distinct keyword
     from {{ source('silver', 'linkedin_keyword_snapshots') }}
     where keyword not in {{ noise_terms() }}
       and length(keyword) > 1
+      and length(keyword) <= 40
+      and size(split(trim(keyword), '\\s+')) <= 4
+      and keyword not rlike '(?i)https?://|www\\.|\\.com|\\.html|\\.pdf|<|>|="|@'
 
 ),
 
@@ -72,3 +74,4 @@ matches as (
 select distinct m.job_url, v.keyword
 from matches m
 inner join vocabulary v on lower(m.matched_text) = lower(v.keyword)
+---test
