@@ -5,7 +5,7 @@ java,language,
 scala,language,
 javascript,language,js
 typescript,language,ts
-go,language,golang
+golang,language,go programming
 rust,language,
 c++,language,cpp
 c#,language,csharp|.net
@@ -98,7 +98,7 @@ tableau,bi,
 power bi,bi,powerbi
 looker,bi,
 qlik,bi,qlikview|qliksense
-mode,bi,mode analytics
+mode analytics,bi,
 metabase,bi,
 superset,bi,apache superset
 sigma,bi,sigma computing
@@ -177,7 +177,7 @@ opentelemetry,observability,otel
 elk stack,observability,elk
 great expectations,observability,
 monte carlo,observability,
-soda,observability,
+soda.io,observability,soda core
 rest api,engineering,rest apis|restful api
 graphql,engineering,
 grpc,engineering,
