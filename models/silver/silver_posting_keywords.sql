@@ -7,6 +7,50 @@ with vocabulary as (
 
 ),
 
+patterns as (
+
+    select
+        keyword,
+        length(keyword) as keyword_length,
+        case
+            -- word characters at both ends -> a word-boundary match is
+            -- meaningful; otherwise (symbol-heavy keywords) fall back to
+            -- a plain literal match
+            when keyword rlike '^\\w.*\\w$|^\\w$'
+                then concat(
+                    '\\b',
+                    regexp_replace(lower(keyword), '([\\+\\*\\?\\.\\(\\)\\[\\]\\^\\$\\|\\\\])', '\\\\$1'),
+                    '\\b'
+                )
+            else regexp_replace(lower(keyword), '([\\+\\*\\?\\.\\(\\)\\[\\]\\^\\$\\|\\\\])', '\\\\$1')
+        end as pattern
+    from vocabulary
+
+),
+
+combined_pattern as (
+
+    select
+        concat(
+            '(?i)(',
+            concat_ws(
+                '|',
+                transform(
+                    -- longest keyword first, so e.g. "react native" wins
+                    -- over "react" matching as a substring of it
+                    array_sort(
+                        collect_list(struct(-keyword_length as ord, pattern as p)),
+                        (l, r) -> l.ord - r.ord
+                    ),
+                    x -> x.p
+                )
+            ),
+            ')'
+        ) as full_pattern
+    from patterns
+
+),
+
 postings as (
 
     select job_url, lower(description_text) as description_lower
@@ -15,35 +59,16 @@ postings as (
 
 ),
 
-candidates as (
+matches as (
 
     select
         p.job_url,
-        v.keyword,
-        p.description_lower,
-        -- escape regex metacharacters in the keyword so it's matched
-        -- literally, then wrap in word boundaries
-        regexp_replace(lower(v.keyword), '([\\+\\*\\?\\.\\(\\)\\[\\]\\^\\$\\|\\\\])', '\\\\$1') as escaped_keyword,
-        -- word characters at both ends -> boundary match is meaningful
-        v.keyword rlike '^\\w.*\\w$|^\\w$' as has_word_boundaries
+        explode(regexp_extract_all(p.description_lower, cp.full_pattern, 1)) as matched_text
     from postings p
-    cross join vocabulary v
-
-),
-
-matched as (
-
-    select job_url, keyword
-    from candidates
-    where
-        case
-            when has_word_boundaries
-                then description_lower rlike concat('(?i)\\b', escaped_keyword, '\\b')
-            else
-                instr(description_lower, lower(keyword)) > 0
-        end
+    cross join combined_pattern cp
 
 )
 
-select job_url, keyword
-from matched
+select distinct m.job_url, v.keyword
+from matches m
+inner join vocabulary v on lower(m.matched_text) = lower(v.keyword)
