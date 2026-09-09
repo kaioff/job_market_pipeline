@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import NodeCache from "node-cache";
 import { runQuery } from "./databricksClient.js";
+import { recent, subscribe, subscriberCount } from "./board/store.js";
+import { startPoller, pollerStatus } from "./board/poller.js";
 
 const app = express();
 app.use(cors());
@@ -292,6 +294,57 @@ app.get("/api/skills/:query/overview", async (req, res) => {
   }
 });
 
+/* ---------- Live job board ---------- */
+//
+// These routes are deliberately unlike the ones above: they never touch
+// Databricks. The poller holds the last 48h in process memory, so a board
+// request costs microseconds instead of waiting on a SQL Warehouse that
+// may be cold. No node-cache either — the store IS the cache.
+
+// Initial paint. Without this the board would be empty on load most of the
+// time, since the live window frequently contains zero postings.
+app.get("/api/board/recent", (req, res) => {
+  const limit = Math.min(Number(req.query.limit) || 200, 1000);
+  res.json(recent(limit));
+});
+
+// Live tail. SSE rather than WebSockets: the feed is server-to-client
+// only, EventSource reconnects on its own, and it survives proxies.
+app.get("/api/board/stream", (req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    // Stops nginx and friends from buffering the stream into uselessness.
+    "X-Accel-Buffering": "no",
+  });
+  res.write("retry: 5000\n\n");
+
+  const unsubscribe = subscribe(res);
+
+  // Idle proxies drop quiet connections; a comment frame keeps it open
+  // without reaching the client's message handler.
+  const keepAlive = setInterval(() => {
+    try {
+      res.write(": ping\n\n");
+    } catch {
+      /* cleaned up by the close handler */
+    }
+  }, 25000);
+
+  req.on("close", () => {
+    clearInterval(keepAlive);
+    unsubscribe();
+  });
+});
+
+// Operational view: mainly for spotting a silent block, where polls keep
+// succeeding but return nothing.
+app.get("/api/board/status", (req, res) => {
+  res.json({ ...pollerStatus(), subscribers: subscriberCount() });
+});
+
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);
+  if (process.env.BOARD_POLLER_ENABLED !== "false") startPoller();
 });

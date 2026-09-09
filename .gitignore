@@ -231,3 +231,6 @@ package-lock.json
 # macOS / editor
 .DS_Store
 .idea/
+
+# Live board hot store (local durability, not source)
+dashboard/server/data/
