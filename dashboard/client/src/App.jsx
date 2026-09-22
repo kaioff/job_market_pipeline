@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import SkillsPage from "./SkillsPage";
 import JobBoard from "./JobBoard";
+import AskPage from "./AskPage";
 import "./App.scoped.css";
 
 /**
@@ -11,6 +12,9 @@ import "./App.scoped.css";
  *   /#/board  — the in-memory hot store over SSE. Never touches Databricks
  *               on the request path, so it stays fast and the warehouse
  *               stays asleep.
+ *   /#/ask    — Claude answering free-form questions through the MCP
+ *               tools (read-only SQL over gold/silver). Wakes the
+ *               warehouse and spends API credits per question.
  *
  * Hash routing rather than react-router: two pages don't justify a
  * dependency, and this keeps the deploy a static bundle with no server
@@ -20,6 +24,7 @@ import "./App.scoped.css";
 const PAGES = [
   { id: "board", label: "Job board" },
   { id: "skills", label: "Skills" },
+  { id: "ask", label: "Ask the data" },
 ];
 
 function currentPage() {
@@ -73,6 +78,8 @@ export default function App() {
             <JobBoard />
           </main>
         </>
+      ) : page === "ask" ? (
+        <AskPage />
       ) : (
         <SkillsPage />
       )}
@@ -80,6 +87,8 @@ export default function App() {
       <footer className="footer">
         {page === "board"
           ? "Live path: LinkedIn poll → dedupe → in-memory feed → this page. Durable copy lands in Delta."
+          : page === "ask"
+          ? "Question → Claude → MCP tools (read-only SQL) → Databricks gold/silver → answer."
           : "Batch path: LinkedIn scrape → Databricks medallion → dbt Gold → this dashboard."}
       </footer>
     </div>

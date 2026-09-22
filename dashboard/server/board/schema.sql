@@ -3,7 +3,7 @@
 -- Sits in bronze alongside linkedin_postings_raw, but differs from it in
 -- one important way: this table is deduped on posting_id, where the 6h
 -- scrape table is append-only-with-duplicates. It is written every few
--- minutes by the dashboard poller (server/board/poller.js), never by dbt.
+-- minutes by the dashboard poller (server/board/poller.py), never by dbt.
 --
 -- Reads on the request path are served from process memory, so nothing
 -- queries this table except the once-per-boot seed. It exists for

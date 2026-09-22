@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "job-market": {
+      "command": "bash",
+      "args": ["-c", "cd dashboard/server && exec .venv/bin/python -m mcp_tools.stdio"]
+    }
+  }
+}
