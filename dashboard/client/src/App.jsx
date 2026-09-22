@@ -1,119 +1,95 @@
-import { useState } from "react";
-import { useKeywordData } from "./useKeywordData";
-import BubbleChart from "./BubbleChart";
-import SmallMultiples from "./SmallMultiples";
-import TopSignals from "./TopSignals";
-import ExperienceBars from "./ExperienceBars";
+import { useState, useEffect } from "react";
+import SkillsPage from "./SkillsPage";
+import JobBoard from "./JobBoard";
+import AskPage from "./AskPage";
 import "./App.scoped.css";
 
-const GRAINS = ["daily", "weekly", "monthly"];
+/**
+ * Two pages over two very different data paths:
+ *
+ *   /#/skills — dbt gold in Databricks, batch, hour-cached. Slow-moving
+ *               aggregates; a cold warehouse is acceptable here.
+ *   /#/board  — the in-memory hot store over SSE. Never touches Databricks
+ *               on the request path, so it stays fast and the warehouse
+ *               stays asleep.
+ *   /#/ask    — Claude answering free-form questions through the MCP
+ *               tools (read-only SQL over gold/silver). Wakes the
+ *               warehouse and spends API credits per question.
+ *
+ * Hash routing rather than react-router: two pages don't justify a
+ * dependency, and this keeps the deploy a static bundle with no server
+ * rewrite rules. Worth revisiting at the third page.
+ */
+
+const PAGES = [
+  { id: "board", label: "Job board" },
+  { id: "skills", label: "Skills" },
+  { id: "ask", label: "Ask the data" },
+];
+
+function currentPage() {
+  const id = window.location.hash.replace(/^#\/?/, "");
+  return PAGES.some((p) => p.id === id) ? id : "board";
+}
 
 export default function App() {
-  const [grain, setGrain] = useState("daily");
-  const { latest, trends, experience, status, trendStatus, error } = useKeywordData(grain);
+  const [page, setPage] = useState(currentPage);
 
-  const latestSnapshotDate = latest?.[0]?.snapshot_date
-    ? String(latest[0].snapshot_date).slice(0, 10)
-    : null;
-  const signalsTracked = latest ? new Set(latest.map((r) => r.keyword)).size : null;
+  useEffect(() => {
+    const onHash = () => setPage(currentPage());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   return (
     <div className="app">
-      <header className="hero">
-        <div className="hero-scanline" aria-hidden="true" />
-        <div className="hero-content">
-          <span className="eyebrow">SAN FRANCISCO · DATA ENGINEER · LIVE SCAN</span>
-          <h1>
-            Signal, not noise.
-            <br />
-            <span className="accent">What the market is actually asking for.</span>
-          </h1>
-          <p className="hero-sub">
-            Every listing scraped, parsed, and cross-referenced daily. This is the
-            frequency of every skill mentioned across active postings — ranked,
-            tracked, and stripped of the boilerplate.
-          </p>
-          {latestSnapshotDate && (
-            <div className="hero-meta">
-              <span>LAST SCAN: {latestSnapshotDate}</span>
-              {signalsTracked && <span>{signalsTracked} SIGNALS TRACKED</span>}
+      <nav className="page-nav" aria-label="Sections">
+        {PAGES.map((p) => (
+          <a
+            key={p.id}
+            href={`#/${p.id}`}
+            className={`page-tab ${page === p.id ? "active" : ""}`}
+            aria-current={page === p.id ? "page" : undefined}
+          >
+            {p.label}
+          </a>
+        ))}
+      </nav>
+
+      {page === "board" ? (
+        <>
+          <header className="hero hero--compact">
+            <div className="hero-scanline" aria-hidden="true" />
+            <div className="hero-content">
+              <span className="eyebrow">SAN FRANCISCO · DATA ENGINEER · LIVE FEED</span>
+              <h1>
+                Fresh postings.
+                <br />
+                <span className="accent">Click straight through to apply.</span>
+              </h1>
+              <p className="hero-sub">
+                Polled continuously and pushed here the moment they appear.
+                Newest first, with the time we found it — not the day
+                LinkedIn rounds it to.
+              </p>
             </div>
-          )}
-        </div>
-      </header>
-
-      <main className="content">
-        {status === "loading" && (
-          <div className="status-panel">
-            <div className="pulse-dot" />
-            Scanning warehouse — this can take up to a minute if it's cold.
-          </div>
-        )}
-
-        {status === "error" && (
-          <div className="status-panel status-error">
-            {error || "Something went wrong reaching the data source."}
-          </div>
-        )}
-
-        {status === "ready" && (
-          <>
-            <section className="panel">
-              <div className="panel-header">
-                <h2>Skill landscape</h2>
-                <span className="panel-caption">Bubble size = share of postings mentioning the term</span>
-              </div>
-              <BubbleChart rows={latest} />
-            </section>
-
-            <section className="panel">
-              <div className="panel-header">
-                <h2>Top signals</h2>
-                <span className="panel-caption">Ranked by share of active postings</span>
-              </div>
-              <TopSignals rows={latest} />
-            </section>
-
-            <section className="panel">
-              <div className="panel-header">
-                <h2>Experience required</h2>
-                <span className="panel-caption">Minimum years mentioned, across all active postings</span>
-              </div>
-              <ExperienceBars rows={experience} />
-            </section>
-
-            <section className="panel">
-              <div className="panel-header">
-                <h2>Signal over time</h2>
-                <div className="grain-toggle" role="tablist" aria-label="Time grain">
-                  {GRAINS.map((g) => (
-                    <button
-                      key={g}
-                      role="tab"
-                      aria-selected={grain === g}
-                      className={`grain-btn ${grain === g ? "active" : ""}`}
-                      onClick={() => setGrain(g)}
-                    >
-                      {g}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {trendStatus === "loading" ? (
-                <div className="status-panel">
-                  <div className="pulse-dot" />
-                  Loading {grain} view…
-                </div>
-              ) : (
-                <SmallMultiples rows={trends} grain={grain} />
-              )}
-            </section>
-          </>
-        )}
-      </main>
+          </header>
+          <main className="content">
+            <JobBoard />
+          </main>
+        </>
+      ) : page === "ask" ? (
+        <AskPage />
+      ) : (
+        <SkillsPage />
+      )}
 
       <footer className="footer">
-        Pipeline: LinkedIn scrape → Databricks medallion → dbt Gold → this dashboard.
+        {page === "board"
+          ? "Live path: LinkedIn poll → dedupe → in-memory feed → this page. Durable copy lands in Delta."
+          : page === "ask"
+          ? "Question → Claude → MCP tools (read-only SQL) → Databricks gold/silver → answer."
+          : "Batch path: LinkedIn scrape → Databricks medallion → dbt Gold → this dashboard."}
       </footer>
     </div>
   );

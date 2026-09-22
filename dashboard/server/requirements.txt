@@ -1,0 +1,9 @@
+anthropic==1.7.0
+beautifulsoup4==4.15.0
+cachetools==7.2.0
+databricks-sql-connector==4.5.0
+fastapi==0.141.1
+httpx==0.28.1
+mcp==2.2.0
+python-dotenv==1.2.3
+uvicorn[standard]==0.53.0

@@ -384,3 +384,450 @@
   font-size: 11px;
   color: var(--muted);
 }
+/* ---------- Skill lookup ---------- */
+
+.skill-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.skill-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+}
+
+.skill-input:focus {
+  outline: none;
+  border-color: var(--signal);
+}
+
+.skill-input::placeholder {
+  color: var(--muted);
+}
+
+.skill-submit {
+  background: var(--signal);
+  color: #14100a;
+  border: none;
+  border-radius: 6px;
+  padding: 0 20px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.skill-submit:hover {
+  filter: brightness(1.1);
+}
+
+.skill-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 5px 13px;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.skill-chip:hover {
+  color: var(--signal);
+  border-color: var(--signal-dim);
+}
+
+.skill-overview {
+  margin-top: 22px;
+}
+
+.skill-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.skill-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 24px;
+  margin: 0;
+  color: var(--signal);
+}
+
+.skill-category {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+.skill-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.skill-stat {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.skill-stat-value {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.skill-stat-suffix {
+  font-size: 15px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.skill-stat-label {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+.skill-block h4 {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.skill-row {
+  grid-template-columns: 26px 1fr 90px 44px;
+  gap: 10px;
+}
+
+.skill-empty {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ---------- Page nav ---------- */
+
+.page-nav {
+  display: flex;
+  gap: 4px;
+  padding-top: 20px;
+}
+
+.page-tab {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--muted);
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.page-tab:hover {
+  color: var(--text);
+}
+
+.page-tab.active {
+  color: var(--signal);
+  border-color: var(--panel-border);
+  background: var(--panel);
+}
+
+.hero--compact {
+  padding: 48px 0 40px;
+}
+
+/* ---------- Live feed status ---------- */
+
+.feed-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.feed-status.live { color: var(--signal); }
+
+.feed-status.offline { color: var(--muted); }
+
+/* The dot pulses only while connected; a steady dot reads as "stalled",
+   which is exactly what a dropped stream is. */
+.feed-status.offline .pulse-dot {
+  background: var(--muted);
+  animation: none;
+}
+
+/* ---------- Job list ---------- */
+
+.job-list {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.job-row {
+  border-top: 1px solid var(--panel-border);
+}
+
+.job-row:first-child {
+  border-top: none;
+}
+
+.job-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 8px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 6px;
+}
+
+.job-link:hover {
+  background: rgba(242, 169, 59, 0.06);
+}
+
+.job-link:hover .job-title {
+  color: var(--signal);
+}
+
+.job-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.job-title {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.job-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.job-age {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Arrival flash: marks what landed while you were watching, then fades so
+   the board doesn't stay permanently highlighted. */
+.job-row.is-new {
+  animation: arrive 2.5s ease-out;
+}
+
+@keyframes arrive {
+  0% { background: rgba(242, 169, 59, 0.16); }
+  100% { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .job-row.is-new { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .job-link {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* ---------- Ask the data ---------- */
+
+.ask-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ask-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.ask-question {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--signal);
+}
+
+.ask-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ask-step-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: var(--muted);
+}
+
+.ask-step--running .ask-step-dot {
+  background: var(--signal);
+  animation: ask-blink 1s ease-in-out infinite;
+}
+
+.ask-step--done .ask-step-dot { background: var(--cool); }
+.ask-step--failed .ask-step-dot { background: var(--danger); }
+
+@keyframes ask-blink {
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ask-step--running .ask-step-dot { animation: none; }
+}
+
+.ask-step details {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.ask-step summary {
+  cursor: pointer;
+  color: var(--cool);
+}
+
+.ask-step pre {
+  margin: 6px 0 0;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+}
+
+.ask-answer {
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.ask-answer > :first-child { margin-top: 0; }
+.ask-answer > :last-child { margin-bottom: 0; }
+
+.ask-answer strong { color: var(--text); }
+
+.ask-answer code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.ask-answer table {
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.ask-answer th,
+.ask-answer td {
+  padding: 6px 14px 6px 0;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: left;
+}
+
+.ask-answer th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ask-form {
+  margin-bottom: 0;
+}
+
+.skill-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+  filter: none;
+}
+
+.ask-clear {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ask-clear:hover { color: var(--text); }
+
+@media (max-width: 600px) {
+  .ask-panel { padding: 18px; }
+}
