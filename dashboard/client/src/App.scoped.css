@@ -744,18 +744,8 @@
   .ask-step--running .ask-step-dot { animation: none; }
 }
 
-.ask-step details {
-  display: inline-block;
-  margin-left: 10px;
-}
-
-.ask-step summary {
-  cursor: pointer;
-  color: var(--cool);
-}
-
-.ask-step pre {
-  margin: 6px 0 0;
+.ask-sql {
+  margin: 6px 0 4px 15px;
   padding: 10px 12px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--panel-border);
@@ -763,6 +753,71 @@
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text);
+  font-size: 12px;
+}
+
+.ask-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ask-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Visually hidden but still focusable and announced as a switch. */
+.ask-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.ask-toggle-track {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--panel-border);
+  transition: background 0.15s;
+}
+
+.ask-toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 0.15s, background 0.15s;
+}
+
+.ask-toggle input:checked + .ask-toggle-track {
+  background: var(--signal-dim);
+}
+
+.ask-toggle input:checked + .ask-toggle-track::after {
+  transform: translateX(16px);
+  background: var(--signal);
+}
+
+.ask-toggle input:focus-visible + .ask-toggle-track {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ask-toggle-track,
+  .ask-toggle-track::after { transition: none; }
 }
 
 .ask-answer {

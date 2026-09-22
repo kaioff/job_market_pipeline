@@ -55,8 +55,19 @@ async function streamAsk(body, onEvent, signal) {
   }
 }
 
+// Remembered per browser; storage can be unavailable (private mode), so
+// failures just fall back to the default.
+function loadShowSql() {
+  try {
+    return localStorage.getItem("ask.showSql") !== "false";
+  } catch {
+    return true;
+  }
+}
+
 export default function AskPage() {
   const [turns, setTurns] = useState([]);
+  const [showSql, setShowSql] = useState(loadShowSql);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const abortRef = useRef(null);
@@ -67,6 +78,14 @@ export default function AskPage() {
   }, [turns]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("ask.showSql", String(showSql));
+    } catch {
+      /* not persisted; the toggle still works for this visit */
+    }
+  }, [showSql]);
 
   // Patch the in-progress (last) turn.
   const updateLast = (fn) =>
@@ -144,6 +163,19 @@ export default function AskPage() {
 
       <main className="content">
         <section className="panel ask-panel">
+          <div className="ask-toolbar">
+            <label className="ask-toggle">
+              <input
+                type="checkbox"
+                role="switch"
+                checked={showSql}
+                onChange={(e) => setShowSql(e.target.checked)}
+              />
+              <span className="ask-toggle-track" aria-hidden="true" />
+              Show SQL queries
+            </label>
+          </div>
+
           {turns.length === 0 && (
             <div className="ask-empty">
               <p className="panel-caption">Try one of these, or ask your own:</p>
@@ -170,11 +202,8 @@ export default function AskPage() {
                         <span className="ask-step-dot" aria-hidden="true" />
                         {TOOL_LABELS[s.name] || s.name}
                         {s.state === "failed" && " — retrying"}
-                        {s.name === "run_sql" && s.input?.sql && (
-                          <details>
-                            <summary>SQL</summary>
-                            <pre>{s.input.sql}</pre>
-                          </details>
+                        {showSql && s.name === "run_sql" && s.input?.sql && (
+                          <pre className="ask-sql">{s.input.sql}</pre>
                         )}
                       </li>
                     ))}

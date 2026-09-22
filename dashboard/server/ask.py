@@ -15,7 +15,7 @@ from mcp import Client
 
 from mcp_tools.server import mcp
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 # A runaway question shouldn't be able to run the warehouse all afternoon.
 MAX_TOOL_ROUNDS = 12
 MAX_HISTORY = 10
